@@ -14,7 +14,7 @@ while True:
 
     img_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     img_blur = cv2.blur(img_gray, (bl,bl))
-    # _, img_bin = cv2.threshold(img_blur, th1, th2, cv2.THRESH_BINARY)
+
 
     circles = cv2.HoughCircles(
         img_blur,
@@ -31,6 +31,8 @@ while True:
         x,y,r = circles[0][0]
         cv2.circle(output, (x,y), r, (0,0,255),2) #outline
         cv2.circle(output, (x,y), 2, (0,0,255), 3) #center
+
+    cv2.line(output, (w // 2, 0), (w // 2, h), (0,0,255), 2)
 
     cv2.imshow('circle', output)
     
