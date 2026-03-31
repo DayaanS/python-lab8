@@ -18,11 +18,24 @@ left_count = 0
 right_count = 0
 
 capture = cv2.VideoCapture(0)
+fly = cv2.imread('fly64.png', cv2.IMREAD_UNCHANGED)
+fh, fw, fc = fly.shape
+
+def overlay(background, overlay, x, y):
+    oh, ow, _ = overlay.shape
+
+    overlay_alpha = overlay[:,:,3]/255.0
+    background_alpha = 1.0 - overlay_alpha
+    for c in range(0,3):
+        background[y-oh//2:y+oh//2, x-ow//2:x+ow//2, c] = (overlay_alpha * overlay[:, :, c] + background_alpha * background[y-oh//2:y+oh//2, x-ow//2:x+ow//2, c])
+    return background
+
 
 while True:
+    
     error, frame = capture.read()
     output = frame.copy()
-    h, w, _ = frame.shape
+    h, w, _ = output.shape
 
     img_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     img_blur = cv2.blur(img_gray, (bl,bl))
@@ -53,9 +66,12 @@ while True:
                 right_count += 1
                 on_left = False
 
+        overlay(output, fly, x, y)
+
     cv2.line(output, (w // 2, 0), (w // 2, h), clr_line, thick1)
     cv2.putText(output, str(left_count), (100, 100), font, 1, clr_txt, thick1)
     cv2.putText(output, str(right_count), (w-100, 100), font, 1, clr_txt, thick1)
+    
     
 
     cv2.imshow('circle', output)
