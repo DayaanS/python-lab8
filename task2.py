@@ -1,16 +1,15 @@
 import cv2
 import numpy as np
 
-bl = 5
-th1 = 100
-th2 = 250
+BL = 5
+TH1 = 100
+TH2 = 250
 
-clr_line = (0,0,255)
-clr_outl = (0,0,255)
-clr_cent = (0,0,255)
-clr_txt = (0,0,255)
-font = cv2.FONT_HERSHEY_SIMPLEX
-thick1 = 2
+CLR_LINE = (0,0,255)
+CLR_OUTL = (0,0,255)
+CLR_TXT = (0,0,255)
+FONT = cv2.FONT_HERSHEY_SIMPLEX
+THICKNESS = 2
 
 on_left = False
 left_count = 0
@@ -45,7 +44,7 @@ def detect_circles(img):
     if circles is not None:
         circles = np.uint16(np.around(circles))
         x,y,r = circles[0][0] 
-        cv2.circle(output, (x,y), r, clr_outl, thick1)
+        cv2.circle(output, (x,y), r, CLR_OUTL, THICKNESS)
         overlay(output, fly, x, y)
         return x
 
@@ -56,22 +55,22 @@ while True:
     h, w, _ = frame.shape
 
     img_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    img_blur = cv2.blur(img_gray, (bl,bl))
+    img_blur = cv2.blur(img_gray, (BL,BL))
 
     x = detect_circles(img_blur)
 
     if x:
         if x < (w // 2): 
-            if on_left == False:
+            if not on_left:
                 left_count += 1
                 on_left = True
         else:
-            if on_left == True or (right_count == 0 and left_count == 0):
+            if on_left or (right_count == 0 and left_count == 0):
                 right_count += 1
                 on_left = False
-    cv2.line(output, (w // 2, 0), (w // 2, h), clr_line, thick1)
-    cv2.putText(output, str(left_count), (100, 100), font, 1, clr_txt, thick1)
-    cv2.putText(output, str(right_count), (w-100, 100), font, 1, clr_txt, thick1)
+    cv2.line(output, (w // 2, 0), (w // 2, h), CLR_LINE, THICKNESS)
+    cv2.putText(output, str(left_count), (100, 100), FONT, 1, CLR_TXT, THICKNESS)
+    cv2.putText(output, str(right_count), (w-100, 100), FONT, 1, CLR_TXT, THICKNESS)
     
     cv2.imshow('circle detector', output)
     
